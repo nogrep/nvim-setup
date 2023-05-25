@@ -16,16 +16,19 @@ keymap.set("n", "<leader>sh", "<C-w>s") -- split window horizontally
 keymap.set("n", "<leader>se", "<C-w>=") -- make split windows equal width & height
 keymap.set("n", "<leader>sx", ":close<CR>") -- close current split window
 
-keymap.set("n", "<leader>to", ":tabnew<CR>") -- open new tab
-keymap.set("n", "<leader>tx", ":tabclose<CR>") -- close current tab
-keymap.set("n", "<leader>tn", ":tabn<CR>") --  go to next tab
-keymap.set("n", "<leader>tp", ":tabp<CR>") --  go to previous tab
 
 -- window movement
 keymap.set("n", "<C-h>", "<C-w>h")
 keymap.set("n", "<C-l>", "<C-w>l")
 keymap.set("n", "<C-j>", "<C-w>j")
 keymap.set("n", "<C-k>", "<C-w>k")
-keymap.set("n", "<leader>c", ":q<CR>")
+keymap.set("n", "<leader>c", ":conf q<CR>")
+keymap.set("n", "<leader>d", ":bw<CR>")
 keymap.set("n", "<leader>v", ":vertical ball<CR>")
-keymap.set("n", "<leader>n", ":bN<CR>")
+
+keymap.set("n", "<leader>b", ":bn<CR>")
+-- keymap.set("n", "<leader>bn", ":bnext<CR>")
+-- keymap.set("n", "<leader>bb", ":bprev<CR>")
+
+keymap.set("n", "<leader>t", ":tabn<CR>", { noremap = true })
+-- keymap.set("n", "<leader>tp", ":tabp<CR>", { noremap = true })

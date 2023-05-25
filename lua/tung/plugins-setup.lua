@@ -28,14 +28,18 @@ end
 
 -- add list of plugins to install
 return packer.startup(function(use)
-  -- packer can manage itself
+  -- Packer can manage itself
   use("wbthomason/packer.nvim")
+  use("ThePrimeagen/vim-be-good")
+  use {'nvim-tree/nvim-web-devicons'}
+  -- Color scheme
   use("folke/tokyonight.nvim")
+  -- Fuzzy finder, grep
   use {
 	  'nvim-telescope/telescope.nvim', tag = '0.1.1',
-	  -- or                            , branch = '0.1.x',
 	  requires = { {'nvim-lua/plenary.nvim'}}
   }
+  -- Highlighting
   use({
     "nvim-treesitter/nvim-treesitter",
     run = function()
@@ -43,8 +47,29 @@ return packer.startup(function(use)
       ts_update()
     end,
   })
-  -- file explorer
-  use("nvim-tree/nvim-tree.lua") 
+  -- File explorer
+  use { 
+    'nvim-tree/nvim-tree.lua',
+    requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+  }
+  -- Status line
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+  }
+  -- Bar management
+  use("tiagovla/scope.nvim")
+  use {
+    'kdheepak/tabline.nvim',
+    requires = { { 'hoob3rt/lualine.nvim', opt=true }, {'kyazdani42/nvim-web-devicons', opt = true} }
+  }
+  -- Indent line
+  use "lukas-reineke/indent-blankline.nvim"
+  -- Auto pair brackets
+  use {
+    "windwp/nvim-autopairs",
+    config = function() require("nvim-autopairs").setup {} end
+  }
   if packer_bootstrap then
     require("packer").sync()
   end
