@@ -11,6 +11,14 @@ require('telescope').setup {
     },
   },
   extensions = {
+    aerial = {
+      -- Display symbols as <root>.<parent>.<symbol>
+      show_nesting = {
+        ['_'] = false, -- This key will be the default
+        json = true,   -- You can set the option for specific filetypes
+        yaml = true,
+      }
+    },
     file_browser = {
       -- path
       -- cwd
@@ -76,3 +84,4 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 pcall(require('telescope').load_extension, 'file_browser')
+pcall(require('telescope').load_extension, 'aerial')
