@@ -12,6 +12,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
 require('lazy').setup({
   -----------------------------------------------------------------------------------------------------
   --ESSENTIAL--
@@ -172,6 +175,7 @@ require('lazy').setup({
       'rafamadriz/friendly-snippets',
     },
   },
+  { import = 'tung.plugins.debug'},
 }, {})
 
 require("tung.plugins.telescope")
