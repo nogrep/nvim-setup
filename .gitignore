@@ -1,4 +1,4 @@
 .DS_Store
 .git/
 plugin/
-lazy-lock.son
+lazy-lock.*
