@@ -30,16 +30,16 @@ vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = 'Save buffer to file'}) -- save 
 vim.keymap.set("n", "<leader>m", ":conf q<CR>", { desc = 'Close buffer with confirmation'}) -- close buffer
 
 -- window movement
--- vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = 'Move to left window'})
--- vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = 'Move to right window'})
--- vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = 'Move to below window'})
--- vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = 'Move to upper window'})
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = 'Move to left window'})
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = 'Move to right window'})
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = 'Move to below window'})
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = 'Move to upper window'})
 
 -- moving between line
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = 'Move forward 1/2 screen and center'})
 vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = 'Move back 1/2 screen and center'})
 vim.keymap.set("n", "<C-f>", "<C-f>zz", { desc = 'Move forward 1/2 screen and center'})
 vim.keymap.set("n", "<C-b>", "<C-b>zz", { desc = 'Move back 1 screen and center'})
-vim.keymap.set('n', '<leader>o', '<cmd>AerialToggle!<CR>', { desc = 'Toggle outline/structure of file'})
+-- vim.keymap.set('n', '<leader>o', '<cmd>AerialToggle!<CR>', { desc = 'Toggle outline/structure of file'})
 
 

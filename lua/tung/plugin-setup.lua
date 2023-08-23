@@ -19,18 +19,23 @@ require('lazy').setup({
   -----------------------------------------------------------------------------------------------------
   --ESSENTIAL--
   -----------------------------------------------------------------------------------------------------
-  -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
   {
-    -- Theme inspired by Atom
     'navarasu/onedark.nvim',
+    lazy = false,
     priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
+  },
+  -- Useful plugin to show you pending keybinds.
+  { 'folke/which-key.nvim', opts = {},
+    cmd = "WhichKey",
+    event = "VeryLazy",
   },
   -- Fuzzy Finder (files, lsp, etc)
-  { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = { 'nvim-lua/plenary.nvim' } },
+  { 'nvim-telescope/telescope.nvim', 
+    branch = '0.1.x', 
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    lazy = true,
+    cmd = "Telescope",
+  },
 
   -- Fuzzy Finder Algorithm which requires local dependencies to be built.
   -- Only load if `make` is available. Make sure you have the system
@@ -43,50 +48,12 @@ require('lazy').setup({
     cond = function()
       return vim.fn.executable 'make' == 1
     end,
-  },
-  {
-    -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'onedark',
-        component_separators = '|',
-        section_separators = '',
-      },
-      sections = {
-        lualine_a = {'mode'},
-        lualine_b = {'branch', 'diff' },
-        lualine_c =  {
-          {
-            'filename',
-            file_status = true,      -- Displays file status (readonly status, modified status)
-            newfile_status = false,  -- Display new file status (new file means no write after created)
-            path = 3,                -- 0: Just the filename
-            -- 1: Relative path
-            -- 2: Absolute path
-            -- 3: Absolute path, with tilde as the home directory
-            -- 4: Filename and parent dir, with tilde as the home directory
-
-            shorting_target = 10,    -- Shortens path to leave 40 spaces in the window
-            -- for other components. (terrible name, any suggestions?)
-            symbols = {
-              modified = '[+]',      -- Text to show when the file is modified.
-              readonly = '[-]',      -- Text to show when the file is non-modifiable or readonly.
-              unnamed = '[No Name]', -- Text to show for unnamed buffers.
-              newfile = '[New]',     -- Text to show for newly created file before first write
-            }
-          }
-        },
-        lualine_x = {'encoding', 'fileformat', 'filetype'},
-        lualine_y = {'progress'},
-        lualine_z = {'location'}
-      },
-    },
+    lazy = true,
   },
   {
     "nvim-telescope/telescope-file-browser.nvim",
-    dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+    dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+    lazy = true,
   },
   {
     -- Highlight, edit, and navigate code
@@ -95,6 +62,16 @@ require('lazy').setup({
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
     build = ':TSUpdate',
+    cmd = {
+      "TSInstall",
+      "TSUninstall",
+      "TSUpdate",
+      "TSUpdateSync",
+      "TSInstallInfo",
+      "TSInstallSync",
+      "TSInstallFromGrammar",
+    },
+    event = "User FileOpened",
   },
   -----------------------------------------------------------------------------------------------------
   --ACCESSORIES--
@@ -117,18 +94,13 @@ require('lazy').setup({
         vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
       end,
     },
+    event = "User FileOpened",
+    cmd = "Gitsigns",
   },
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
-  {
-    -- Show outline/structure of file
-    'stevearc/aerial.nvim',
-    opts = {},
-    -- Optional dependencies
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons"
-    },
+  { 'numToStr/Comment.nvim', opts = {}, 
+    keys = { { "gc", mode = { "n", "v" } }, { "gb", mode = { "n", "v" } } },
+    event = "User FileOpened",
   },
   {
     -- Add indentation guides even on blank lines
@@ -151,14 +123,8 @@ require('lazy').setup({
       -- Automatically install LSPs to stdpath for neovim
       { 'williamboman/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
-
-      -- Useful status updates for LSP
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
-
-      -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
     },
+    lazy = true,
   },
   {
     -- Autocompletion
@@ -174,11 +140,12 @@ require('lazy').setup({
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
     },
+    lazy = true,
   },
   { import = 'tung.plugins.debug'},
 }, {})
 
+vim.cmd[[colorscheme onedark]]
 require("tung.plugins.telescope")
 require("tung.plugins.treesitter")
 require("tung.plugins.lsp")
-
