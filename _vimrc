@@ -1,86 +1,43 @@
-" Vim with all enhancements
-source $VIMRUNTIME/vimrc_example.vim
-
-" Use the internal diff if available.
-" Otherwise use the special 'diffexpr' for Windows.
-if &diffopt !~# 'internal'
-  set diffexpr=MyDiff()
-endif
-function MyDiff()
-  let opt = '-a --binary '
-  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
-  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
-  let arg1 = v:fname_in
-  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
-  let arg1 = substitute(arg1, '!', '\!', 'g')
-  let arg2 = v:fname_new
-  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
-  let arg2 = substitute(arg2, '!', '\!', 'g')
-  let arg3 = v:fname_out
-  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
-  let arg3 = substitute(arg3, '!', '\!', 'g')
-  if $VIMRUNTIME =~ ' '
-    if &sh =~ '\<cmd'
-      if empty(&shellxquote)
-        let l:shxq_sav = ''
-        set shellxquote&
-      endif
-      let cmd = '"' . $VIMRUNTIME . '\diff"'
-    else
-      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
-    endif
-  else
-    let cmd = $VIMRUNTIME . '\diff'
-  endif
-  let cmd = substitute(cmd, '!', '\!', 'g')
-  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
-  if exists('l:shxq_sav')
-    let &shellxquote=l:shxq_sav
-  endif
-endfunction
-
-set langmenu=en_US
-let $LANG = 'en_US'
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
-
-let mapleader =" "
-set guifont=Agave\ Nerd\ Font:h14
+" Turn syntax highlighting on.
+syntax on
+" Highlight cursor line underneath the cursor horizontally.
+set cursorline
+" Set tab width to 4 columns.
+set tabstop=4
+" Enable auto completion menu after pressing TAB.
+set wildmenu
+" Show line number and relative number
 set number
 set relativenumber
-set hlsearch
-syntax on
-filetype on
-colorscheme slate
 
-if has("gui_running")
-  " GUI is running or is about to start.
-  " Maximize gvim window (for an alternative on Windows, see simalt below).
-  set lines=999 columns=999
-else
-  " This is console Vim.
-  if exists("+lines")
-    set lines=50
-  endif
-  if exists("+columns")
-    set columns=100
-  endif
-endif
+" Enable type file detection. Vim will be able to try to detect the type of file in use.
+filetype on
+" Enable plugins and load plugin for the detected file type.
+filetype plugin on
+" Load an indent file for the detected file type.
+filetype indent on
+
+" While searching though a file incrementally highlight matching characters as you type.
+set incsearch
+" Ignore capital letters during search.
+set ignorecase
+" Use highlighting when doing a search.
+set hlsearch
+
+" Set the commands to save in history default number is 20.
+set history=1000
+
+let mapleader =" "
 
 call plug#begin()
-
+Plug 'easymotion/vim-easymotion'
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-
-" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-
+Plug 'Donaldttt/fuzzyy'
 call plug#end()
-let $FZF_DEFAULT_COMMAND = 'rg --files'
-
-let java_highlight_functions = 1
-
-nnoremap <silent> <C-f> :Files<CR>
-nnoremap <silent> <Leader>f :Rg<CR>
-
-
+let g:enable_fuzzyy_keymaps = 0
+let g:files_respect_gitignore = 0
+nnoremap <silent> <Leader>e :NERDTreeToggle<CR>
+nnoremap <silent> <Leader>j <Plug>(easymotion-bd-w)
+nnoremap <silent> <Leader>f :FuzzyFiles<CR>
+nnoremap <silent> <Leader>b :FuzzyBuffers<CR>
+nnoremap <silent> <Leader>g :FuzzyGrep<CR>
