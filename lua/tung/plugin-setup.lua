@@ -30,8 +30,8 @@ require('lazy').setup({
     event = "VeryLazy",
   },
   -- Fuzzy Finder (files, lsp, etc)
-  { 'nvim-telescope/telescope.nvim', 
-    branch = '0.1.x', 
+  { 'nvim-telescope/telescope.nvim',
+    branch = '0.1.x',
     dependencies = { 'nvim-lua/plenary.nvim' },
     lazy = true,
     cmd = "Telescope",
@@ -94,17 +94,16 @@ require('lazy').setup({
         vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
       end,
     },
-    event = "User FileOpened",
-    cmd = "Gitsigns",
   },
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {}, 
+  { 'numToStr/Comment.nvim', opts = {},
     keys = { { "gc", mode = { "n", "v" } }, { "gb", mode = { "n", "v" } } },
     event = "User FileOpened",
   },
   -- Add indentation guides even on blank lines
   { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
   { "windwp/nvim-autopairs" },
+  { "easymotion/vim-easymotion"},
   -----------------------------------------------------------------------------------------------------
   --LSP--
   -----------------------------------------------------------------------------------------------------

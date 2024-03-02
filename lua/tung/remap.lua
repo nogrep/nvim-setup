@@ -42,4 +42,5 @@ vim.keymap.set("n", "<C-f>", "<C-f>zz", { desc = 'Move forward 1/2 screen and ce
 vim.keymap.set("n", "<C-b>", "<C-b>zz", { desc = 'Move back 1 screen and center'})
 -- vim.keymap.set('n', '<leader>o', '<cmd>AerialToggle!<CR>', { desc = 'Toggle outline/structure of file'})
 
-
+vim.g.EasyMotion_do_mapping = 0
+vim.keymap.set("n", "<leader>j", "<Plug>(easymotion-overwin-w)", { desc = 'Easymotion by word'}) 
