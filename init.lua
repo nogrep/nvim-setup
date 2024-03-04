@@ -232,6 +232,8 @@ require('lazy').setup {
   --
   --  This is equivalent to:
   --    require('Comment').setup({})
+  -- Multi cursor
+  {'mg979/vim-visual-multi'},
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
