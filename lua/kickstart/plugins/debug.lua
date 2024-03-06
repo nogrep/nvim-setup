@@ -21,6 +21,7 @@ return {
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
     'mfussenegger/nvim-dap-python',
+    -- 'mfussenegger/nvim-jdtls',
   },
   config = function()
     local dap = require 'dap'
@@ -84,6 +85,29 @@ return {
 
     -- Install golang specific config
     -- require('dap-go').setup()
-    require('dap-python').setup('~/.virtualenvs/debugpy/Scripts/python')
+    -- Python
+    require('dap-python').setup '~/.virtualenvs/debugpy/Scripts/python'
+    -- -- Java Remote Application
+    -- dap.adapters.java = function(callback)
+    --   -- FIXME:
+    --   -- Here a function needs to trigger the `vscode.java.startDebugSession` LSP command
+    --   -- The response to the command must be the `port` used below
+    --   callback {
+    --     type = 'server',
+    --     host = '127.0.0.1',
+    --     -- host = 'localhost',
+    --     port = 8888,
+    --   }
+    -- end
+    -- dap.configurations.java = {
+    --   {
+    --     type = 'java',
+    --     request = 'attach',
+    --     name = 'Debug (Attach) - Remote',
+    --     hostName = '127.0.0.1',
+    --     -- hostName = 'localhost',
+    --     port = 8888,
+    --   },
+    -- }
   end,
 }
