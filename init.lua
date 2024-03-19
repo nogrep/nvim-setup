@@ -232,6 +232,14 @@ require('lazy').setup {
   --
   --  This is equivalent to:
   --    require('Comment').setup({})
+  -- Auto pair parentheses
+  {
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    config = true,
+    -- use opts = {} for passing setup options
+    -- this is equalent to setup({}) function
+  },
   -- Multi cursor
   { 'mg979/vim-visual-multi' },
 
@@ -639,7 +647,7 @@ require('lazy').setup {
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'isort', 'black' },
+        python = { 'black' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
