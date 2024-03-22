@@ -5,7 +5,6 @@
 -- Primarily focused on configuring the debugger for Go, but can
 -- be extended to other languages as well. That's why it's called
 -- kickstart.nvim and not kitchen-sink.nvim ;)
-
 return {
   -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
@@ -13,7 +12,16 @@ return {
   dependencies = {
     -- Creates a beautiful debugger UI
     'rcarriga/nvim-dap-ui',
-
+    -- Show variable values inline like VSCODE or JetBrains
+    {
+      'theHamsta/nvim-dap-virtual-text',
+      config = function() -- This is the function that runs, AFTER loading
+        require('nvim-dap-virtual-text').setup {
+          -- position of virtual text, see `:h nvim_buf_set_extmark()`, default tries to inline the virtual text. Use 'eol' to set to end of line
+          virt_text_pos = vim.fn.has 'nvim-0.10' == 1 and 'inline' or 'eol',
+        }
+      end,
+    },
     -- Installs the debug adapters for you
     'williamboman/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
@@ -50,6 +58,7 @@ return {
     vim.keymap.set('n', '<F8>', dap.step_over, { desc = 'Debug: Step Over' })
     vim.keymap.set('n', '<F6>', dap.step_out, { desc = 'Debug: Step Out' })
     vim.keymap.set('n', '<F2>', dap.disconnect, { desc = 'Debug: Disconnect/Terminate' })
+    vim.keymap.set('n', '<F3>', dapui.toggle, { desc = 'Toggle Debug view' })
     vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
     vim.keymap.set('n', '<leader>B', function()
       dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
@@ -64,27 +73,48 @@ return {
       icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
       controls = {
         icons = {
-          pause = '⏸',
-          play = '▶',
-          step_into = '⏎',
-          step_over = '⏭',
-          step_out = '⏮',
-          step_back = 'b',
-          run_last = '▶▶',
-          terminate = '⏹',
-          disconnect = '⏏',
+          -- pause = '⏸',
+          -- play = '▶',
+          -- step_into = '⏎',
+          -- step_over = '⏭',
+          -- step_out = '⏮',
+          -- step_back = 'b',
+          -- run_last = '▶▶',
+          -- terminate = '⏹',
+          -- disconnect = '⏏',
         },
       },
     }
-
-    -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
-    vim.keymap.set('n', '<F7>', dapui.toggle, { desc = 'Debug: See last session result.' })
 
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
     -- Install golang specific config
+    -- Rust
+    dap.adapters.lldb = {
+      type = 'server',
+      port = '${port}',
+      executable = {
+        -- Must be absolute path
+        command = 'C:/Users/B014205/AppData/Local/nvim-data/mason/packages/codelldb/extension/adapter/codelldb.exe',
+        args = { '--port', '${port}' },
+        detached = false,
+      },
+    }
+    dap.configurations.rust = {
+      {
+        name = 'Launch file',
+        type = 'codelldb',
+        request = 'launch',
+        program = function()
+          -- Must be absolute path
+          return vim.fn.input('Path to executable: ', 'D:/abc/xyz/rust/target/debug/', 'file')
+        end,
+        cwd = '${workspaceFolder}',
+        stopOnEntry = false,
+      },
+    }
     -- require('dap-go').setup()
     -- Python
     require('dap-python').setup '~/.virtualenvs/debugpy/Scripts/python'

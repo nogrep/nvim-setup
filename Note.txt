@@ -1,0 +1,9 @@
+#RUST
+https://visualstudio.microsoft.com/visual-cpp-build-tools/
+https://forge.rust-lang.org/infra/other-installation-methods.html
+https://sajidifti.medium.com/how-to-install-gcc-and-gdb-on-windows-using-msys2-tutorial-0fceb7e66454
+https://rust-lang.github.io/rustup/installation/windows.html
+x86_64-pc-windows-gnu => linux package, msys
+x86_64-pc-windows-msvc => use with visual studio
+rustup show
+rustup toolchain install stable
