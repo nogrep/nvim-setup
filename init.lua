@@ -554,7 +554,7 @@ require('lazy').setup {
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        jdtls = {},
+        -- jdtls = {},
         pyright = {},
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -609,7 +609,8 @@ require('lazy').setup {
         'stylua', -- Used to format lua code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
-
+      require('java').setup()
+      require('lspconfig').jdtls.setup ({})
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
@@ -656,6 +657,31 @@ require('lazy').setup {
     },
   },
 
+  -- nvim-java [java support]
+  -- https://github.com/nvim-java/nvim-java
+  -- Reliable jdtls support. Must go before mason-lspconfig nad lsp-config.
+  {
+    'nvim-java/nvim-java',
+    ft = { 'java' },
+    dependencies = {
+      'nvim-java/lua-async-await',
+      'nvim-java/nvim-java-core',
+      'nvim-java/nvim-java-test',
+      'nvim-java/nvim-java-dap',
+      'MunifTanjim/nui.nvim',
+      'neovim/nvim-lspconfig',
+      'mfussenegger/nvim-dap',
+      {
+        'williamboman/mason.nvim',
+        opts = {
+          registries = {
+            'github:nvim-java/mason-registry',
+            'github:mason-org/mason-registry',
+          },
+        },
+      },
+    },
+  },
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
