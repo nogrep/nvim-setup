@@ -175,19 +175,22 @@ M.run_term = function(command, ...)
   vim.api.nvim_chan_send(terminal_id, string.format(command .. '\n', ...))
   vim.cmd 'stopinsert'
 end
+
 vim.keymap.set('n', '<F5>', function()
   local ft = vim.api.nvim_buf_get_option(0, 'filetype')
+  local filepath = vim.fn.expand '%:p'
+  local windows_path_fix = string.gsub(filepath, '\\', '/')
+  local del_space_path_fix = string.gsub(windows_path_fix, '%s+', '\\ ')
   if ft == 'vim' or ft == 'lua' then
     vim.cmd 'silent! write'
     vim.cmd 'source %'
   elseif ft == 'python' then
     vim.cmd 'silent! write'
     vim.cmd 'sp'
-    M.run_term('python3 %s', vim.fn.expand '%')
+    M.run_term('python3 %s', del_space_path_fix)
   elseif ft == 'java' then
     vim.cmd 'silent! write'
     vim.cmd 'sp'
-    -- local file = vim.fn.expand '%:t:r'
     local filename = vim.fn.expand '%:t:r'
     local command = 'javarun %s'
     M.run_term(command, filename)
@@ -201,9 +204,7 @@ vim.keymap.set('n', '<F5>', function()
   elseif ft == 'rust' then
     vim.cmd 'silent! write'
     vim.cmd 'sp'
-    local file = vim.fn.expand '%'
     local output = vim.fn.expand '%:t:r'
-    -- local command = 'rustc %s -o %s && ./%s; rm %s'
     local command = 'cargo build --bins && ./target/debug/%s;'
     M.run_term(command, output)
     -- elseif ft == 'http' then

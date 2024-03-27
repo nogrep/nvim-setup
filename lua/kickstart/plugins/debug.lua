@@ -108,9 +108,10 @@ return {
       type = 'server',
       port = '${port}',
       executable = {
-        -- Must be absolute path
-        -- command = 'C:/Users/<Username>/AppData/Local/nvim-data/mason/packages/codelldb/extension/adapter/codelldb.exe',
-        command = vim.fn.stdpath 'data' .. '/mason/bin/codelldb',
+        -- Mac/Linux
+        -- command = vim.fn.stdpath 'data' .. '/mason/bin/codelldb',
+        -- Windows
+        command = vim.fn.stdpath 'data' .. '/mason/mason/packages/codelldb/extension/adapter/codelldb.exe',
         args = { '--port', '${port}' },
         detached = false,
       },
@@ -190,8 +191,11 @@ return {
     -- Python
     dap.adapters.python = {
       type = 'executable',
+      -- Mac/Linux
       -- command = vim.fn.stdpath 'data' .. '/mason/packages/debugpy/venv/bin/python',
-      command = home_dir .. '/.virtualenvs/debugpy/bin/python',
+      -- command = home_dir .. '/.virtualenvs/debugpy/bin/python',
+      -- Windows
+      command = home_dir .. '/.virtualenvs/debugpy/Scripts/python',
       args = { '-m', 'debugpy.adapter' },
     }
     dap.configurations.python = {
