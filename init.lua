@@ -94,6 +94,7 @@ vim.g.maplocalleader = ' '
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
+vim.opt.shell = 'bash'
 
 -- Make line numbers default
 vim.opt.number = true
@@ -161,6 +162,55 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Buffer manipulation
+vim.keymap.set('n', '<C-q>', ':q<CR>', { desc = 'Close buffer' })
+
+-- Execute current file
+local M = {}
+local eval = vim.api.nvim_eval
+-- local nnoremap = vim.keymap.nnoremap
+M.run_term = function(command, ...)
+  vim.cmd 'term'
+  local terminal_id = eval 'b:terminal_job_id'
+  vim.api.nvim_chan_send(terminal_id, string.format(command .. '\n', ...))
+  vim.cmd 'stopinsert'
+end
+vim.keymap.set('n', '<F5>', function()
+  local ft = vim.api.nvim_buf_get_option(0, 'filetype')
+  if ft == 'vim' or ft == 'lua' then
+    vim.cmd 'silent! write'
+    vim.cmd 'source %'
+  elseif ft == 'python' then
+    vim.cmd 'silent! write'
+    vim.cmd 'sp'
+    M.run_term('python3 %s', vim.fn.expand '%')
+  elseif ft == 'java' then
+    vim.cmd 'silent! write'
+    vim.cmd 'sp'
+    -- local file = vim.fn.expand '%:t:r'
+    local filename = vim.fn.expand '%:t:r'
+    local command = 'javarun %s'
+    M.run_term(command, filename)
+  elseif ft == 'c' then
+    vim.cmd 'silent! write'
+    vim.cmd 'sp'
+    local file = vim.fn.expand '%'
+    local output = vim.fn.expand '%:t:r'
+    local command = 'gcc %s -o %s && ./%s; rm %s'
+    M.run_term(command, file, output, output, output)
+  elseif ft == 'rust' then
+    vim.cmd 'silent! write'
+    vim.cmd 'sp'
+    local file = vim.fn.expand '%'
+    local output = vim.fn.expand '%:t:r'
+    -- local command = 'rustc %s -o %s && ./%s; rm %s'
+    local command = 'cargo build --bins && ./target/debug/%s;'
+    M.run_term(command, output)
+    -- elseif ft == 'http' then
+    --     -- Not really save and exec, but think it fits nicely in here for mapping
+    --     require('rest-nvim').run()
+  end
+end, { desc = 'Execute current file' })
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -610,7 +660,7 @@ require('lazy').setup {
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
       require('java').setup()
-      require('lspconfig').jdtls.setup ({})
+      require('lspconfig').jdtls.setup {}
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
