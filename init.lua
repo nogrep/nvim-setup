@@ -192,8 +192,9 @@ vim.keymap.set('n', '<F5>', function()
     vim.cmd 'silent! write'
     vim.cmd 'sp'
     local filename = vim.fn.expand '%:t:r'
-    local command = 'javarun %s'
-    M.run_term(command, filename)
+    -- local command_linux = 'javarun %s'
+    local command_windows = 'java ' .. del_space_path_fix
+    M.run_term(command_windows, filename)
   elseif ft == 'c' then
     vim.cmd 'silent! write'
     vim.cmd 'sp'
