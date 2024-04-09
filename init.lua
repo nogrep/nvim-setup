@@ -191,25 +191,25 @@ vim.keymap.set('n', '<F5>', function()
     vim.cmd 'source %'
   elseif ft == 'python' then
     vim.cmd 'silent! write'
-    vim.cmd 'sp'
+    vim.cmd 'vsp'
     M.run_term('python3 %s', del_space_path_fix)
   elseif ft == 'java' then
     vim.cmd 'silent! write'
-    vim.cmd 'sp'
+    vim.cmd 'vsp'
     local filename = vim.fn.expand '%:t:r'
     -- local command_linux = 'javarun %s'
     local command_windows = 'java ' .. del_space_path_fix
     M.run_term(command_windows, filename)
   elseif ft == 'c' then
     vim.cmd 'silent! write'
-    vim.cmd 'sp'
+    vim.cmd 'vsp'
     local file = vim.fn.expand '%'
     local output = vim.fn.expand '%:t:r'
     local command = 'gcc %s -o %s && ./%s; rm %s'
     M.run_term(command, file, output, output, output)
   elseif ft == 'rust' then
     vim.cmd 'silent! write'
-    vim.cmd 'sp'
+    vim.cmd 'vsp'
     local output = vim.fn.expand '%:t:r'
     local command = 'cargo build --bins && ./target/debug/%s;'
     M.run_term(command, output)
