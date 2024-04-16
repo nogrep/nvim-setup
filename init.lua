@@ -321,6 +321,37 @@ require('lazy').setup {
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      on_attach = function(bufnr)
+        local gitsigns = require('gitsigns')
+
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
+        end
+
+        -- Navigation
+        map('n', '[c', gitsigns.prev_hunk, { desc = 'Go to previous git change' })
+        map('n', ']c', gitsigns.next_hunk, { desc = 'Go to next git change' })
+
+        -- Actions
+        map('n', '<leader>hs', gitsigns.stage_hunk, { desc = '[h]unk [s]taging' })
+        map('n', '<leader>hr', gitsigns.reset_hunk, { desc = '[h]unk [r]eset' })
+        map('v', '<leader>hs', function() gitsigns.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end, { desc = '[h]unk [s]taging' })
+        map('v', '<leader>hr', function() gitsigns.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end, { desc = '[h]unk [r]eset' })
+        map('n', '<leader>hS', gitsigns.stage_buffer, { desc = '[h]unk [s]staging entire buffer' })
+        map('n', '<leader>hu', gitsigns.undo_stage_hunk, { desc = '[h]unk [u]ndo staging' })
+        map('n', '<leader>hR', gitsigns.reset_buffer, { desc = '[h]unk [R]eset buffer' })
+        map('n', '<leader>hp', gitsigns.preview_hunk, { desc = '[h]unk [p]review' })
+        map('n', '<leader>hb', function() gitsigns.blame_line{full=true} end, { desc = '[h]unk [b]lame line' })
+        map('n', '<leader>htb', gitsigns.toggle_current_line_blame, { desc = '[h]unk [t]oggle [b]lame line' })
+        map('n', '<leader>hd', gitsigns.diffthis, { desc = '[h]unk [d]iff with recent version' })
+        map('n', '<leader>hD', function() gitsigns.diffthis('~') end, { desc = '[h]unk [D]iff with previous commit' })
+        map('n', '<leader>htd', gitsigns.toggle_deleted, { desc = '[h]unk [t]oggle [d]eleted line' })
+
+        -- Text object
+        map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'Select git hunk: vih' })
+      end
     },
   },
 
