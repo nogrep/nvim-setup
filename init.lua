@@ -170,6 +170,53 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- Buffer manipulation
 vim.keymap.set('n', '<C-q>', ':q<CR>', { desc = 'Close buffer' })
 
+-- Convert selected text from Japanese unicode to utf8 and display in visual mode
+local bit = require 'bit'
+local rshift, band = bit.rshift, bit.band
+function unicode_to_utf8()
+  local function get_visual_selection()
+    local s_start = vim.fn.getpos "'<"
+    local s_end = vim.fn.getpos "'>"
+    local n_lines = math.abs(s_end[2] - s_start[2]) + 1
+    local lines = vim.api.nvim_buf_get_lines(0, s_start[2] - 1, s_end[2], false)
+    lines[1] = string.sub(lines[1], s_start[3], -1)
+    if n_lines == 1 then
+      lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3] - s_start[3] + 1)
+    else
+      lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3])
+    end
+    return table.concat(lines, '\n')
+  end
+  -- Function to convert a single code point to UTF-8
+  local function codepoint_to_utf8(codepoint)
+    if codepoint <= 0x7f then
+      return string.char(codepoint)
+    elseif codepoint <= 0x7ff then
+      return string.char(192 + band(rshift(codepoint, 6), 31), 128 + band(codepoint, 63))
+    elseif codepoint <= 0xffff then
+      return string.char(224 + band(rshift(codepoint, 12), 15), 128 + band(rshift(codepoint, 6), 63), 128 + band(codepoint, 63))
+    elseif codepoint <= 0x10ffff then
+      return string.char(
+        240 + band(rshift(codepoint, 18), 7),
+        128 + band(rshift(codepoint, 12), 63),
+        128 + band(rshift(codepoint, 6), 63),
+        128 + band(codepoint, 63)
+      )
+    end
+    error 'Code point out of range'
+  end
+
+  local input = get_visual_selection()
+  -- Replace all occurrences of ¥uXXXX in the input
+  -- local utf8_text = input:gsub('\\u([%da-fA-F]+)', function(hex)
+  local utf8_text = input:gsub('\\u(%x%x%x%x)', function(hex)
+    local codepoint = tonumber(hex, 16)
+    return codepoint_to_utf8(codepoint)
+  end)
+  print(utf8_text)
+end
+vim.keymap.set('v', '<leader>m', ':<C-u>call v:lua.unicodeToUtf8()<CR>', { desc = 'Show selected text' })
+
 -- Execute current file
 local M = {}
 local eval = vim.api.nvim_eval
