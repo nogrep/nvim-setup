@@ -1011,12 +1011,12 @@ require('lazy').setup {
     keys = {
       {
         -- Customize or remove this keymap to your liking
-        '<leader>ff',
+        '<leader>cf',
         function()
           require('conform').format { async = true, lsp_fallback = true }
         end,
-        mode = '',
-        desc = 'Format buffer',
+        mode = 'n',
+        desc = '[C]ode [F]ormat buffer',
       },
     },
     opts = {
