@@ -391,8 +391,12 @@ require('lazy').setup {
       require('which-key').register {
         ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
         ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
+        ['<leader>f'] = { name = '[F]ile Browser', _ = 'which_key_ignore' },
+        ['<leader>h'] = { name = '[H]unk Git', _ = 'which_key_ignore' },
+        ['<leader>ht'] = { name = '[H]unk [T]oggle', _ = 'which_key_ignore' },
         ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
+        ['<leader>si'] = { name = '[S]earch g[I]t', _ = 'which_key_ignore' },
         ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
       }
     end,
@@ -429,7 +433,7 @@ require('lazy').setup {
       -- Useful for getting pretty icons, but requires special font.
       --  If you already have a Nerd Font, or terminal set up with fallback fonts
       --  you can enable this
-      { 'nvim-tree/nvim-web-devicons' }
+      { 'nvim-tree/nvim-web-devicons' },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -453,6 +457,7 @@ require('lazy').setup {
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local fb_actions = require 'telescope._extensions.file_browser.actions'
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
@@ -467,6 +472,65 @@ require('lazy').setup {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          file_browser = {
+            path = vim.loop.cwd(),
+            cwd = vim.loop.cwd(),
+            cwd_to_path = false,
+            grouped = false,
+            files = true,
+            add_dirs = true,
+            depth = 3,
+            auto_depth = true,
+            select_buffer = false,
+            hidden = { file_browser = false, folder_browser = false },
+            respect_gitignore = vim.fn.executable 'fd' == 1,
+            no_ignore = false,
+            follow_symlinks = false,
+            browse_files = require('telescope._extensions.file_browser.finders').browse_files,
+            browse_folders = require('telescope._extensions.file_browser.finders').browse_folders,
+            hide_parent_dir = true,
+            collapse_dirs = false,
+            prompt_path = false,
+            quiet = false,
+            dir_icon = '',
+            dir_icon_hl = 'Default',
+            display_stat = { date = true },
+            hijack_netrw = false,
+            use_fd = true,
+            git_status = true,
+            mappings = {
+              ['i'] = {
+                ['<A-c>'] = fb_actions.create,
+                ['<S-CR>'] = fb_actions.create_from_prompt,
+                ['<A-r>'] = fb_actions.rename,
+                ['<A-m>'] = fb_actions.move,
+                ['<A-y>'] = fb_actions.copy,
+                ['<A-d>'] = fb_actions.remove,
+                ['<C-_>'] = fb_actions.goto_parent_dir,
+                ['<C-e>'] = fb_actions.goto_home_dir,
+                ['<C-w>'] = fb_actions.goto_cwd,
+                ['<C-t>'] = fb_actions.change_cwd,
+                ['<C-f>'] = fb_actions.toggle_browser,
+                ['<C-h>'] = fb_actions.toggle_hidden,
+                ['<C-s>'] = fb_actions.toggle_all,
+                ['<bs>'] = fb_actions.backspace,
+              },
+              ['n'] = {
+                ['c'] = fb_actions.create,
+                ['r'] = fb_actions.rename,
+                ['m'] = fb_actions.move,
+                ['y'] = fb_actions.copy,
+                ['d'] = fb_actions.remove,
+                ['_'] = fb_actions.goto_parent_dir,
+                ['e'] = fb_actions.goto_home_dir,
+                ['w'] = fb_actions.goto_cwd,
+                ['t'] = fb_actions.change_cwd,
+                ['f'] = fb_actions.toggle_browser,
+                ['h'] = fb_actions.toggle_hidden,
+                ['s'] = fb_actions.toggle_all,
+              },
+            },
+          },
         },
       }
 
@@ -476,7 +540,12 @@ require('lazy').setup {
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>fb', ':Telescope file_browser<CR>', { desc = 'Open telescope file browser' })
+      vim.keymap.set('n', '<leader>fb', ':Telescope file_browser<CR>', { desc = '[F]ile [B]rowser with original path' })
+      vim.keymap.set('n', '<leader>fp', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { desc = '[F]ile [B]rowser with current buffer path' })
+
+      vim.keymap.set('n', '<leader>sic', builtin.git_bcommits, { desc = '[S]earch g[I]t [C]ommits of current file' })
+      vim.keymap.set('n', '<leader>sis', builtin.git_status, { desc = '[S]earch g[I]t [S]tatus' })
+
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
@@ -517,7 +586,219 @@ require('lazy').setup {
     dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
     lazy = true,
   },
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+      'MunifTanjim/nui.nvim',
+      -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+    },
+    config = function() -- This is the function that runs, AFTER loading
+      vim.keymap.set('n', '<leader>ft', ':Neotree<CR>', { desc = '[F]ile [T]ree' })
 
+      require('neo-tree').setup {
+        --     close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
+        --     popup_border_style = 'rounded',
+        enable_git_status = true,
+        --     enable_diagnostics = true,
+        --     enable_normal_mode_for_inputs = false, -- Enable normal mode for input dialogs.
+        --     open_files_do_not_replace_types = { 'terminal', 'trouble', 'qf' }, -- when opening files, do not use windows containing these filetypes or buftypes
+        --     sort_case_insensitive = false, -- used when sorting files and directories in the tree
+        --     sort_function = nil, -- use a custom function for sorting files and directories in the tree
+        --     -- sort_function = function (a,b)
+        --     --       if a.type == b.type then
+        --     --           return a.path > b.path
+        --     --       else
+        --     --           return a.type > b.type
+        --     --       end
+        --     --   end , -- this sorts files and directories descendantly
+        --     -- A list of functions, each representing a global custom command
+        --     -- that will be available in all sources (if not overridden in `opts[source_name].commands`)
+        --     -- see `:h neo-tree-custom-commands-global`
+        --     commands = {},
+        window = {
+          position = 'left',
+          width = 40,
+          mapping_options = {
+            noremap = true,
+            nowait = true,
+          },
+          mappings = {
+            ['<space>'] = {
+              'toggle_node',
+              nowait = false, -- disable `nowait` if you have existing combos starting with this char that you want to use
+            },
+            ['<2-LeftMouse>'] = 'open',
+            ['<cr>'] = 'open',
+            ['<esc>'] = 'cancel', -- close preview or floating neo-tree window
+            ['P'] = { 'toggle_preview', config = { use_float = true, use_image_nvim = true } },
+            -- Read `# Preview Mode` for more information
+            ['l'] = 'focus_preview',
+            ['S'] = 'open_split',
+            ['s'] = 'open_vsplit',
+            -- ["S"] = "split_with_window_picker",
+            -- ["s"] = "vsplit_with_window_picker",
+            ['t'] = 'open_tabnew',
+            -- ["<cr>"] = "open_drop",
+            -- ["t"] = "open_tab_drop",
+            ['w'] = 'open_with_window_picker',
+            --["P"] = "toggle_preview", -- enter preview mode, which shows the current node without focusing
+            -- ['C'] = 'close_node',
+            ['C'] = 'close_all_subnodes',
+            ['z'] = 'close_all_nodes',
+            ['e'] = 'expand_all_nodes',
+            ['a'] = {
+              'add',
+              -- this command supports BASH style brace expansion ("x{a,b,c}" -> xa,xb,xc). see `:h neo-tree-file-actions` for details
+              -- some commands may take optional config options, see `:h neo-tree-mappings` for details
+              config = {
+                show_path = 'none', -- "none", "relative", "absolute"
+              },
+            },
+            ['A'] = 'add_directory', -- also accepts the optional config.show_path option like "add". this also supports BASH style brace expansion.
+            ['d'] = 'delete',
+            ['r'] = 'rename',
+            ['y'] = 'copy_to_clipboard',
+            ['x'] = 'cut_to_clipboard',
+            ['p'] = 'paste_from_clipboard',
+            ['c'] = 'copy', -- takes text input for destination, also accepts the optional config.show_path option like "add":
+            -- ["c"] = {
+            --  "copy",
+            --  config = {
+            --    show_path = "none" -- "none", "relative", "absolute"
+            --  }
+            --}
+            ['m'] = 'move', -- takes text input for destination, also accepts the optional config.show_path option like "add".
+            ['q'] = 'close_window',
+            ['R'] = 'refresh',
+            ['?'] = 'show_help',
+            ['<'] = 'prev_source',
+            ['>'] = 'next_source',
+            ['i'] = 'show_file_details',
+          },
+        },
+        --     nesting_rules = {},
+        filesystem = {
+          --       filtered_items = {
+          --         visible = false, -- when true, they will just be displayed differently than normal items
+          --         hide_dotfiles = true,
+          --         hide_gitignored = true,
+          --         hide_hidden = true, -- only works on Windows for hidden files/directories
+          --         hide_by_name = {
+          --           --"node_modules"
+          --         },
+          --         hide_by_pattern = { -- uses glob style patterns
+          --           --"*.meta",
+          --           --"*/src/*/tsconfig.json",
+          --         },
+          --         always_show = { -- remains visible even if other settings would normally hide it
+          --           --".gitignored",
+          --         },
+          --         never_show = { -- remains hidden even if visible is toggled to true, this overrides always_show
+          --           --".DS_Store",
+          --           --"thumbs.db"
+          --         },
+          --         never_show_by_pattern = { -- uses glob style patterns
+          --           --".null-ls_*",
+          --         },
+          --       },
+          follow_current_file = {
+            enabled = true, -- This will find and focus the file in the active buffer every time
+            --               -- the current file is changed while the tree is open.
+            leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+          },
+          group_empty_dirs = true, -- when true, empty folders will be grouped together
+          --       hijack_netrw_behavior = 'open_default', -- netrw disabled, opening a directory opens neo-tree
+          --       -- in whatever position is specified in window.position
+          --       -- "open_current",  -- netrw disabled, opening a directory opens within the
+          --       -- window like netrw would, regardless of window.position
+          --       -- "disabled",    -- netrw left alone, neo-tree does not handle opening dirs
+          --       use_libuv_file_watcher = false, -- This will use the OS level file watchers to detect changes
+          --       -- instead of relying on nvim autocmd events.
+          --       window = {
+          --         mappings = {
+          --           ['<bs>'] = 'navigate_up',
+          --           ['.'] = 'set_root',
+          --           ['H'] = 'toggle_hidden',
+          --           ['/'] = 'fuzzy_finder',
+          --           ['D'] = 'fuzzy_finder_directory',
+          --           ['#'] = 'fuzzy_sorter', -- fuzzy sorting using the fzy algorithm
+          --           -- ["D"] = "fuzzy_sorter_directory",
+          --           ['f'] = 'filter_on_submit',
+          --           ['<c-x>'] = 'clear_filter',
+          --           ['[g'] = 'prev_git_modified',
+          --           [']g'] = 'next_git_modified',
+          --           ['o'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
+          --           ['oc'] = { 'order_by_created', nowait = false },
+          --           ['od'] = { 'order_by_diagnostics', nowait = false },
+          --           ['og'] = { 'order_by_git_status', nowait = false },
+          --           ['om'] = { 'order_by_modified', nowait = false },
+          --           ['on'] = { 'order_by_name', nowait = false },
+          --           ['os'] = { 'order_by_size', nowait = false },
+          --           ['ot'] = { 'order_by_type', nowait = false },
+          --           -- ['<key>'] = function(state) ... end,
+          --         },
+          --         fuzzy_finder_mappings = { -- define keymaps for filter popup window in fuzzy_finder_mode
+          --           ['<down>'] = 'move_cursor_down',
+          --           ['<C-n>'] = 'move_cursor_down',
+          --           ['<up>'] = 'move_cursor_up',
+          --           ['<C-p>'] = 'move_cursor_up',
+          --           -- ['<key>'] = function(state, scroll_padding) ... end,
+          --         },
+          --       },
+          --
+          --       commands = {}, -- Add a custom command or override a global one using the same function name
+        },
+        buffers = {
+          follow_current_file = {
+            enabled = true, -- This will find and focus the file in the active buffer every time
+            --              -- the current file is changed while the tree is open.
+            leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+          },
+          group_empty_dirs = true, -- when true, empty folders will be grouped together
+          show_unloaded = true,
+          window = {
+            mappings = {
+              ['bd'] = 'buffer_delete',
+              ['<bs>'] = 'navigate_up',
+              ['.'] = 'set_root',
+              ['o'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
+              ['oc'] = { 'order_by_created', nowait = false },
+              ['od'] = { 'order_by_diagnostics', nowait = false },
+              ['om'] = { 'order_by_modified', nowait = false },
+              ['on'] = { 'order_by_name', nowait = false },
+              ['os'] = { 'order_by_size', nowait = false },
+              ['ot'] = { 'order_by_type', nowait = false },
+            },
+          },
+        },
+        --     git_status = {
+        --       window = {
+        --         position = 'float',
+        --         mappings = {
+        --           ['A'] = 'git_add_all',
+        --           ['gu'] = 'git_unstage_file',
+        --           ['ga'] = 'git_add_file',
+        --           ['gr'] = 'git_revert_file',
+        --           ['gc'] = 'git_commit',
+        --           ['gp'] = 'git_push',
+        --           ['gg'] = 'git_commit_and_push',
+        --           ['o'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
+        --           ['oc'] = { 'order_by_created', nowait = false },
+        --           ['od'] = { 'order_by_diagnostics', nowait = false },
+        --           ['om'] = { 'order_by_modified', nowait = false },
+        --           ['on'] = { 'order_by_name', nowait = false },
+        --           ['os'] = { 'order_by_size', nowait = false },
+        --           ['ot'] = { 'order_by_type', nowait = false },
+        --         },
+        --       },
+        --     },
+      }
+    end,
+  },
+  { 'joom/latex-unicoder.vim' },
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
