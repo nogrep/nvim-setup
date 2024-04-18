@@ -215,7 +215,7 @@ function unicode_to_utf8()
   end)
   print(utf8_text)
 end
-vim.keymap.set('v', '<leader>m', ':<C-u>call v:lua.unicodeToUtf8()<CR>', { desc = 'Show selected text' })
+vim.keymap.set('v', '<leader>m', ':<C-u>call v:lua.unicode_to_utf8()<CR>', { desc = 'Show selected text' })
 
 -- Execute current file
 local M = {}
@@ -591,6 +591,7 @@ require('lazy').setup {
       vim.keymap.set('n', '<leader>fp', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { desc = '[F]ile [B]rowser with current buffer path' })
 
       vim.keymap.set('n', '<leader>sic', builtin.git_bcommits, { desc = '[S]earch g[I]t [C]ommits of current file' })
+      vim.keymap.set('n', '<leader>sib', builtin.git_commits, { desc = '[S]earch g[I]t [C]ommits of current branch' })
       vim.keymap.set('n', '<leader>sis', builtin.git_status, { desc = '[S]earch g[I]t [S]tatus' })
 
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
