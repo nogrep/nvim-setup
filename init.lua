@@ -845,7 +845,6 @@ require('lazy').setup {
       }
     end,
   },
-  { 'joom/latex-unicoder.vim' },
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
