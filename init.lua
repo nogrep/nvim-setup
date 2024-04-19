@@ -145,6 +145,9 @@ vim.opt.shiftwidth = 2
 vim.opt.autoindent = true
 vim.opt.smartindent = true
 
+-- Show confirm dialog when close buffer
+vim.opt.confirm = true
+
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
 
@@ -166,9 +169,6 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
--- Buffer manipulation
-vim.keymap.set('n', '<C-q>', ':q<CR>', { desc = 'Close buffer' })
 
 -- Convert selected text from Japanese unicode to utf8 and display in visual mode
 local bit = require 'bit'
@@ -289,6 +289,9 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.keymap.set('n', '<C-w>d', ':bd<CR>', { desc = 'Close buffer' })
+vim.keymap.set('n', '<C-w>s', ':vs<CR>', { desc = 'Split buffer' })
+vim.keymap.set('n', '<C-s>', ':w<CR>', { desc = 'Save buffer' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
