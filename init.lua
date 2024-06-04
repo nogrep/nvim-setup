@@ -170,6 +170,22 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Add clipboard support for WSL
+if vim.fn.has('wsl') == 1 then
+    vim.g.clipboard = {
+        name = 'WslClipboard',
+        copy = {
+            ['+'] = 'clip.exe',
+            ['*'] = 'clip.exe',
+        },
+        paste = {
+            ['+'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+            ['*'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+        },
+        cache_enabled = 0,
+    }
+end
+
 -- Convert selected text from Japanese unicode to utf8 and display in visual mode
 local bit = require 'bit'
 local rshift, band = bit.rshift, bit.band
